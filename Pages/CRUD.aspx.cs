@@ -10,10 +10,9 @@ namespace CRUD.Pages
     public partial class CRUD : System.Web.UI.Page
     {
         readonly SqlConnection con = DbConnectionProvider.GetConnection;
-       
-        
-       public static string sID = "-1";
-       public static string sOpc = "";
+
+        public static string sID = "-1";
+        public static string sOpc = "";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -55,61 +54,110 @@ namespace CRUD.Pages
 
         void CargarDatos()
         {
-            con.Open();
-            SqlDataAdapter da = new SqlDataAdapter("sp_read", con);
-            da.SelectCommand.CommandType = CommandType.StoredProcedure;
-            da.SelectCommand.Parameters.Add("@Id", SqlDbType.Int).Value = sID;
-            DataSet ds = new DataSet();
-            ds.Clear();
-            da.Fill(ds);
-            DataTable dt = ds.Tables[0];
-            DataRow row = dt.Rows[0];
-            tbCodigoPeriodoLectivo.Text = row[1].ToString();
-            tbDescripcionPeriodoLectivo.Text = row[2].ToString();
-            tbsucursal.Text = row[3].ToString();
-            
-            tbestado.Text = row[4].ToString(); ;
+            try
+            {
+                con.Open();
+                SqlDataAdapter da = new SqlDataAdapter("sp_read", con);
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                da.SelectCommand.Parameters.Add("@Id", SqlDbType.Int).Value = sID;
+                DataSet ds = new DataSet();
+                ds.Clear();
+                da.Fill(ds);
+                DataTable dt = ds.Tables[0];
+                DataRow row = dt.Rows[0];
+                tbCodigoPeriodoLectivo.Text = row[1].ToString();
+                tbDescripcionPeriodoLectivo.Text = row[2].ToString();
+                tbsucursal.Text = row[3].ToString();
 
-            con.Close();
+                tbestado.Text = row[4].ToString();
+                ;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            finally
+            {
+                con.Close();
+            }
         }
 
         protected void BtnCreate_Click(object sender, EventArgs e)
         {
-            SqlCommand cmd = new SqlCommand("sp_create", con);
-            con.Open();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@CodigoPeriodoLectivo", SqlDbType.VarChar).Value = tbCodigoPeriodoLectivo.Text; 
-            cmd.Parameters.Add("@DescripcionPeriodoLectivo", SqlDbType.Int).Value = tbDescripcionPeriodoLectivo.Text; 
-            cmd.Parameters.Add("@AAia", SqlDbType.VarChar).Value = tbsucursal.Text; 
-            cmd.Parameters.Add("@Estado", SqlDbType.VarChar).Value = tbestado.Text;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Response.Redirect("Index.aspx");
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_create", con);
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@CodigoPeriodoLectivo", SqlDbType.VarChar).Value =
+                    tbCodigoPeriodoLectivo.Text;
+                cmd.Parameters.Add("@DescripcionPeriodoLectivo", SqlDbType.Int).Value =
+                    tbDescripcionPeriodoLectivo.Text;
+                cmd.Parameters.Add("@AAia", SqlDbType.VarChar).Value = tbsucursal.Text;
+                cmd.Parameters.Add("@Estado", SqlDbType.VarChar).Value = tbestado.Text;
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                throw;
+            }
+            finally
+            {
+                con.Close();
+                Response.Redirect("Index.aspx");
+            }
         }
 
         protected void BtnUpdate_Click(object sender, EventArgs e)
         {
-            SqlCommand cmd = new SqlCommand("sp_update", con);
-            con.Open();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@CodigoPeriodoLectivo", SqlDbType.Int).Value = tbCodigoPeriodoLectivo.Text;
-            cmd.Parameters.Add("@DescripcionPeriodoLectivo", SqlDbType.VarChar).Value = tbCodigoPeriodoLectivo.Text;
-            cmd.Parameters.Add("@AAia", SqlDbType.Int).Value = tbDescripcionPeriodoLectivo.Text;
-            cmd.Parameters.Add("@Estado", SqlDbType.VarChar).Value = tbestado.Text;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Response.Redirect("Index.aspx");
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_update", con);
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@CodigoPeriodoLectivo", SqlDbType.Int).Value =
+                    tbCodigoPeriodoLectivo.Text;
+                cmd.Parameters.Add("@DescripcionPeriodoLectivo", SqlDbType.VarChar).Value =
+                    tbCodigoPeriodoLectivo.Text;
+                cmd.Parameters.Add("@AAia", SqlDbType.Int).Value = tbDescripcionPeriodoLectivo.Text;
+                cmd.Parameters.Add("@Estado", SqlDbType.VarChar).Value = tbestado.Text;
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                throw;
+            }
+            finally
+            {
+                con.Close();
+                Response.Redirect("Index.aspx");
+            }
         }
 
         protected void BtnDelete_Click(object sender, EventArgs e)
         {
-            SqlCommand cmd = new SqlCommand("sp_delete", con);
-            con.Open();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@CodigoPeriodoLectivo", SqlDbType.Int).Value = tbCodigoPeriodoLectivo.Text;
-            cmd.ExecuteNonQuery();
-            con.Close();
-            Response.Redirect("Index.aspx");
+            try
+            {
+                SqlCommand cmd = new SqlCommand("sp_delete", con);
+                con.Open();
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@CodigoPeriodoLectivo", SqlDbType.Int).Value =
+                    tbCodigoPeriodoLectivo.Text;
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error al eliminar");
+                throw;
+            }
+            finally
+            {
+                con.Close();
+                Response.Redirect("Index.aspx");
+            }
         }
 
         protected void BtnVolver_Click(object sender, EventArgs e)
